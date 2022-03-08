@@ -1,11 +1,3 @@
-/**
- * Self made calendar for this project
- * I'va watched pre-built alternatives but nothing in open source
- * project hitted me.
- *
- * Full calendar inspired.
- */
-
 import resizeCalendar from "./responsive.js";
 import "../scss/_calendar.scss";
 
