@@ -202,6 +202,12 @@ import resizeCalendar from "./responsive.js";
  ) => {
      let tableDiv = document.getElementById(tableId);
 
+     const calWrap = document.createElement('div');
+     calWrap.classList.add('calwrapper');
+     tableDiv.insertAdjacentElement('beforebegin', calWrap);
+
+     calWrap.appendChild(tableDiv);
+
      // Remove all child if any.
      while (tableDiv.hasChildNodes()) {
          tableDiv.removeChild(tableDiv.lastChild);

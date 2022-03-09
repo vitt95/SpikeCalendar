@@ -25,6 +25,9 @@ const resizeCalendar = (tableId) => {
 
     // if parentWidth is 0, get the offsetWidth of root parent.
     let parentWidth = tableDiv.parentElement.clientWidth == 0 ? tableDiv.parentElement.offsetWidth : tableDiv.parentElement.clientWidth;
+
+    console.log(parentWidth);
+    console.log(tableDiv.parentElement.clientWidth);
     
     if(tableDiv.parentElement){
         switch(true){
