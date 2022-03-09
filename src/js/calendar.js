@@ -1,5 +1,8 @@
 import resizeCalendar from "./responsive.js";
-import "../scss/_calendar.scss";
+/**
+ * Compiled via sass cli
+ */
+//import "../scss/_calendar.scss";
 
 
  const MONTH = 11;
