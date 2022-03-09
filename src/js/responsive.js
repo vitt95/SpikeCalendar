@@ -22,10 +22,10 @@ const breakpoints = {
 const resizeCalendar = (tableId) => {
     const tableDiv = document.getElementById(tableId);
     const tdElements = document.querySelectorAll('.calendar-table td');
-    console.log(tableDiv.parentElement.clientWidth);
 
-    let parentWidth = tableDiv.parentElement.clientWidth;
-
+    // if parentWidth is 0, get the offsetWidth of root parent.
+    let parentWidth = tableDiv.parentElement.clientWidth == 0 ? tableDiv.parentElement.offsetWidth : tableDiv.parentElement.clientWidth;
+    
     if(tableDiv.parentElement){
         switch(true){
             case ( parentWidth <= breakpoints.minus) :
@@ -44,13 +44,11 @@ const resizeCalendar = (tableId) => {
                 applyResizeClass("large", tdElements);
             break;
 
-            case ( parentWidth <= breakpoints.xlarge && parentWidth > breakpoints.large) : 
+            case ( (parentWidth <= breakpoints.xlarge && parentWidth > breakpoints.large) || parentWidth > breakpoints.xlarge) : 
                 applyResizeClass("xlarge", tdElements);
             break;
         }
     }
-
-    //console.log(tdElements);
 };
 
 

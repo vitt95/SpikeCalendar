@@ -1,6 +1,7 @@
 import resizeCalendar from "./responsive.js";
 import "../scss/_calendar.scss";
 
+
  const MONTH = 11;
 
  const months = [
