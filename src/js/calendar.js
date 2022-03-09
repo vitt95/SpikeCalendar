@@ -51,6 +51,13 @@ import resizeCalendar from "./responsive.js";
  const addEventToButtons = (tableId, params) => {
      const iconPrevButton = document.getElementById("iconPrevCalendar");
      const iconNextButton = document.getElementById("iconNextCalendar");
+     const dataCells = document.querySelectorAll('[data-date]');
+
+     for(let i = 0; i < dataCells.length; i++){
+         dataCells[i].addEventListener('click', (evt) => {
+            console.log(evt.target.attributes[0].nodeValue);
+         });    
+     }
 
      iconPrevButton.addEventListener("click", () => {
          params.month = params.month > 0 ? params.month - 1 : MONTH;
@@ -201,12 +208,17 @@ import resizeCalendar from "./responsive.js";
      config
  ) => {
      let tableDiv = document.getElementById(tableId);
+    
+     // Check if wrapper div is already created.
+     let calWrap = document.getElementsByClassName('calwrapper')[0];
 
-     const calWrap = document.createElement('div');
-     calWrap.classList.add('calwrapper');
-     tableDiv.insertAdjacentElement('beforebegin', calWrap);
-
-     calWrap.appendChild(tableDiv);
+     // if not , it's created and then tableDiv is attached to it.
+     if(calWrap === undefined || calWrap.length == 0 ){
+        calWrap = document.createElement('div');
+        calWrap.classList.add('calwrapper');
+        tableDiv.insertAdjacentElement('beforebegin', calWrap);
+        calWrap.appendChild(tableDiv);
+     }
 
      // Remove all child if any.
      while (tableDiv.hasChildNodes()) {
