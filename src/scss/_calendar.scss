@@ -68,6 +68,10 @@ table.calendar-table {
   }
 }
 
+.calendar-table td.selected {
+    background-color: #7bc7f4;
+}
+
 .calendar-table td .day {
   position: absolute;
   top: 8px;
