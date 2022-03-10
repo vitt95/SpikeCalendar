@@ -63,7 +63,7 @@ const addEventToButtons = (tableId, params) => {
       selectedDays.push(evt.target);
       if (!dataCells[i].classList.contains("disabled")) {
         lastIndex = i;
-        console.log(selectedDays.length);
+        //console.log(selectedDays.length);
         selectedDays.forEach((elem) => {
           elem.classList.remove("selected");
         });
@@ -79,8 +79,8 @@ const addEventToButtons = (tableId, params) => {
         lastIndex < i
       ) {
         evt.target.classList.add("selected");
-        console.log(`Last index + 1: ${lastIndex + 1}`);
-        console.log(`Current index : ${i}`);
+        //console.log(`Last index + 1: ${lastIndex + 1}`);
+        //console.log(`Current index : ${i}`);
         if (lastIndex + 1 < i) {
           console.log(lastIndex + 1);
           for (let d = i; d > lastIndex; d--) {
