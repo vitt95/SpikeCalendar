@@ -75,6 +75,7 @@ const generateTableCells = (
   let preCounter = params.daysPrevMonth - params.paddingDays;
   let tb = document.getElementById("calTbody");
   let date = new Date();
+  let dayNum;
 
   for (
     let d = 1;
@@ -83,8 +84,6 @@ const generateTableCells = (
   ) {
     //date.setFullYear(config.year, config.month, d - 1);
     // Get day cardinality.
-    let dayNum;
-
     if (d % days.length == 1) {
       let tr = document.createElement("tr");
       tr.classList.add("tr-body");
