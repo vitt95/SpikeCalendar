@@ -194,49 +194,11 @@ const buildCalendarFundamentals = (month, config) => {
      <tr id="calendarDaysRow"></tr>
  </thead>`;
 
-  let iconPrev =
-    config.iconPrev == "default"
-      ? '<i class="bi bi-caret-left-square-fill"></i>'
-      : config.iconPrev;
-  let iconNext =
-    config.iconNext == "default"
-      ? '<i class="bi bi-caret-right-square-fill"></i>'
-      : config.iconNext;
-  let _heading = `<div class="calendarHeadingButtons" style="/*! width: 30%; *//*! text-align: center; */float: inline-end;">
-  <span id="iconPrevCalendar"><i class="bi bi-caret-left-square-fill"></i></span>
-  <span id="iconNextCalendar"><i class="bi bi-caret-right-square-fill"></i></span>
-  </div>
-  <div class="calendarHeading" style="/*! text-align: center; *//*! display: block; */text-align: center;">
-    <h2 class="calendarHeadingMonthText" style="/*! width: min-content; */">${months[month]}</h2>
-</div>`;
-
   let tbody = `<tbody id="calTbody" class="calendarTbody"></tbody>`;
-
-  const colGroupss = `<colgroup class="weekday" span="5"></colgroup>
-  <colgroup class="weekend ${
-    config.disableWeekend == true ? "disabled" : ""
-  }" span="2"></colgroup>`;
-
-  let colGroups = [];
-
-  let colGroup = document.createElement('colgroup');
-  colGroup.classList.add("weekday");
-  colGroup.setAttribute("span", "5");
-  colGroups.push(colGroup);
-
-  colGroup = document.createElement('colgroup');
-  colGroup.classList.add('weekend');
-  colGroup.setAttribute("span", "2");
-
-  colGroups.push(colGroup);
 
   let html = document.createElement("table");
   html.classList.add("table", "calendar-table", "responsive");
 
-  colGroups.forEach(colGroup => {
-    html.appendChild(colGroup);
-  })
-  
   html.innerHTML = `
  ${thead}
  ${tbody}
@@ -247,12 +209,35 @@ const buildCalendarFundamentals = (month, config) => {
 
 
 /**
+ * Build colgroups 
+ * @returns {Array<HtmlElement>}
+ */
+
+const buildColGroups = () => {
+  let colGroups = [];
+
+  let colGroup = document.createElement('colgroup');
+  colGroup.classList.add('weekend');
+  colGroup.setAttribute("span", "2");
+  colGroups.push(colGroup);
+
+  colGroup = document.createElement('colgroup');
+  colGroup.classList.add("weekday");
+  colGroup.setAttribute("span", "5");
+  colGroups.push(colGroup);
+
+  return colGroups;
+}
+
+
+
+/**
  * Returns an object of two HtmlElement. 
  * ButtonHeading and TextHeading
  * @returns {HtmlElement}
  */
 
-const buildCalendarHeading = (month) => {
+const buildCalendarHeading = (month, config) => {
 
   let buttonsHeading = document.createElement('div');
   buttonsHeading.classList.add("calendarHeadingButtons");
@@ -261,11 +246,11 @@ const buildCalendarHeading = (month) => {
 
   let iconPrevElement = document.createElement("span");
   iconPrevElement.id = "iconPrevCalendar";
-  iconPrevElement.innerHTML = `<i class="bi bi-caret-left-square-fill"></i>`;
+  iconPrevElement.innerHTML = config.iconPrev == 'default' ? `<i class="bi bi-caret-left-square-fill"></i>` : config.iconPrev;
 
   let iconNextElement = document.createElement("span");
   iconNextElement.id = "iconNextCalendar";
-  iconNextElement.innerHTML = `<i class="bi bi-caret-right-square-fill"></i>`;
+  iconNextElement.innerHTML = config.iconNext == 'default' ? `<i class="bi bi-caret-right-square-fill"></i>` : config.iconNext;
 
   subButtonHeadingDiv.appendChild(iconPrevElement);
   subButtonHeadingDiv.appendChild(iconNextElement);
@@ -330,7 +315,7 @@ const buildTableMarkup = (
   // Build calendar fundamentals
   let html = buildCalendarFundamentals(params.month, config);
 
-  let heading = buildCalendarHeading(params.month);
+  let heading = buildCalendarHeading(params.month, config);
 
   // Hook fundamentals to mount point
   tableDiv.insertAdjacentElement("afterbegin", (heading.buttonsHeading));
@@ -339,6 +324,10 @@ const buildTableMarkup = (
   heading.buttonsHeading.insertAdjacentElement('afterend', heading.textHeading);
 
   tableDiv.appendChild(html);
+
+  buildColGroups().forEach(elem => {
+    html.insertAdjacentElement('afterbegin',elem);
+  });
 
   // Generate days row
   generateDaysRow("calendarDaysRow", {
