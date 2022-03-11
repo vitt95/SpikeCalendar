@@ -21,6 +21,37 @@
   //border-collapse: none !important;
 }
 
+.calendarHeading {
+  text-align: center;
+  padding: 7px;
+}
+
+.calendarHeadingButtons {
+  height: 35px;
+}
+
+.calendarHeadingSubButton {
+  float: inline-end;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  span {
+    * {
+      font-size: 25px;
+      margin: 3px;
+      &:focus {
+        transform: scale(0.8);
+      }
+    }
+    &:focus {
+      transform: scale(0.8);
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
 .calendar-table.table thead,
 .calendar-table.table tbody,
 .calendar-table.table tfoot,
@@ -74,17 +105,34 @@ table.calendar-table {
   }
 }
 
+
 .calendar-table td.selected {
-    background-color: #7bc7f4;
+  background-color: #7bc7f4;
 }
 
 .calendar-table td .day {
-  color: #000; 
+  color: #000;
   @include tdday();
 }
 
+.calendar-table td .today{
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    left: 8px;
+    top: 12px;
+    border-radius: 50%;
+    border: 0.5px solid #e11111;
+    span{
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #e11111;
+    }
+}
+
 .calendar-table td .weday {
-  color : rgb(226, 48, 48);
+  color: rgb(226, 48, 48);
   @include tdday();
 }
 

@@ -99,7 +99,7 @@ const generateTableCells = (
       dayNum = setDateUnderTd(td, config, date, 0, (d-params.paddingDays));
       daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday " : "day"}">${
         d - params.paddingDays
-      }</div>`;
+      }</div>${isToday(date) ? "<div class='today' title='Today'><span></span></div>" : ""}`;
 
       if(config.disableWeekend && (dayNum == 5 || dayNum == 6)){
         td.setAttribute("disabled", "true");
@@ -150,9 +150,21 @@ const setDateUnderTd = (
     dayOffset
   );
   td.setAttribute("data-date", date.toLocaleDateString());
-
+  
   return dayCardinality(date);
 };
+
+/**
+ * This method checks if given date is today
+ * @param {Date} date 
+ * @returns {boolean}
+ */
+const isToday = (date) => { 
+  let today = new Date(Date.now());
+  let t = today.toLocaleDateString();
+  return t == date.toLocaleDateString();
+}
+
 
 /**
  * Returns the cardinality of the day
@@ -190,30 +202,42 @@ const buildCalendarFundamentals = (month, config) => {
     config.iconNext == "default"
       ? '<i class="bi bi-caret-right-square-fill"></i>'
       : config.iconNext;
-  let caption = `<caption>
- <small id="iconPrevCalendar">
-     ${iconPrev}
- </small>
- ${months[month]}
- <small id="iconNextCalendar">
-     ${iconNext}
- </small>
- </caption>
- <colgroup class="weekday" span="5"></colgroup>
- <colgroup class="weekend ${
-   config.disableWeekend == true ? "disabled" : ""
- }" span="2"></colgroup>
- `;
+  let _heading = `<div class="calendarHeadingButtons" style="/*! width: 30%; *//*! text-align: center; */float: inline-end;">
+  <span id="iconPrevCalendar"><i class="bi bi-caret-left-square-fill"></i></span>
+  <span id="iconNextCalendar"><i class="bi bi-caret-right-square-fill"></i></span>
+  </div>
+  <div class="calendarHeading" style="/*! text-align: center; *//*! display: block; */text-align: center;">
+    <h2 class="calendarHeadingMonthText" style="/*! width: min-content; */">${months[month]}</h2>
+</div>`;
 
-  let tbody = `<tbody id="calTbody" class="calendarTbody">
+  let tbody = `<tbody id="calTbody" class="calendarTbody"></tbody>`;
 
- </tbody>`;
+  const colGroupss = `<colgroup class="weekday" span="5"></colgroup>
+  <colgroup class="weekend ${
+    config.disableWeekend == true ? "disabled" : ""
+  }" span="2"></colgroup>`;
 
-  const html = document.createElement("table");
+  let colGroups = [];
+
+  let colGroup = document.createElement('colgroup');
+  colGroup.classList.add("weekday");
+  colGroup.setAttribute("span", "5");
+  colGroups.push(colGroup);
+
+  colGroup = document.createElement('colgroup');
+  colGroup.classList.add('weekend');
+  colGroup.setAttribute("span", "2");
+
+  colGroups.push(colGroup);
+
+  let html = document.createElement("table");
   html.classList.add("table", "calendar-table", "responsive");
 
+  colGroups.forEach(colGroup => {
+    html.appendChild(colGroup);
+  })
+  
   html.innerHTML = `
- ${caption}
  ${thead}
  ${tbody}
  `;
@@ -221,6 +245,54 @@ const buildCalendarFundamentals = (month, config) => {
   return html;
 };
 
+
+/**
+ * Returns an object of two HtmlElement. 
+ * ButtonHeading and TextHeading
+ * @returns {HtmlElement}
+ */
+
+const buildCalendarHeading = (month) => {
+
+  let buttonsHeading = document.createElement('div');
+  buttonsHeading.classList.add("calendarHeadingButtons");
+  let subButtonHeadingDiv = document.createElement('div');
+  subButtonHeadingDiv.classList.add('calendarHeadingSubButton');
+
+  let iconPrevElement = document.createElement("span");
+  iconPrevElement.id = "iconPrevCalendar";
+  iconPrevElement.innerHTML = `<i class="bi bi-caret-left-square-fill"></i>`;
+
+  let iconNextElement = document.createElement("span");
+  iconNextElement.id = "iconNextCalendar";
+  iconNextElement.innerHTML = `<i class="bi bi-caret-right-square-fill"></i>`;
+
+  subButtonHeadingDiv.appendChild(iconPrevElement);
+  subButtonHeadingDiv.appendChild(iconNextElement);
+
+  buttonsHeading.appendChild(subButtonHeadingDiv);
+
+  let heading = document.createElement('div');
+  heading.classList.add("calendarHeading");
+
+  let monthText = document.createElement('h2');
+  monthText.innerText = `${months[month]}`;
+  heading.appendChild(monthText);
+
+  return heading = {
+    buttonsHeading : buttonsHeading,
+    textHeading : heading,
+  };
+}
+
+
+
+/**
+ * 
+ * @param {*} tableId 
+ * @param {*} params 
+ * @param {*} config 
+ */
 const buildTableMarkup = (
   tableId,
   params = {
@@ -258,13 +330,22 @@ const buildTableMarkup = (
   // Build calendar fundamentals
   let html = buildCalendarFundamentals(params.month, config);
 
+  let heading = buildCalendarHeading(params.month);
+
   // Hook fundamentals to mount point
-  tableDiv.insertAdjacentElement("afterbegin", html);
+  tableDiv.insertAdjacentElement("afterbegin", (heading.buttonsHeading));
+
+  // Build heading parts of calendar
+  heading.buttonsHeading.insertAdjacentElement('afterend', heading.textHeading);
+
+  tableDiv.appendChild(html);
 
   // Generate days row
   generateDaysRow("calendarDaysRow", {
     shortDays: true,
   });
+
+  // Generate days cells
   generateTableCells(params, config);
 
   if (config.responsive == true) {
@@ -289,7 +370,7 @@ const buildTableMarkup = (
  */
 
 export const createTableBody = (tableId, config) => {
-  console.log(config);
+  //console.log(config);
   let year = config.year == null ? __year : config.year;
   let month = config.month == null ? __month : config.month;
   let day = config.day == null ? __day : config.day;
@@ -314,7 +395,7 @@ export const createTableBody = (tableId, config) => {
 
   /**
    * Calendar matrix size
-   * @var {int} calendarSize
+   * @var {number} calendarSize
    */
   const calendarSize = days.length * 6;
 
@@ -337,7 +418,7 @@ export const createTableBody = (tableId, config) => {
 
   /**
    * Padding days at current day of the previous month.
-   * @var {int} paddingDays
+   * @var {number} paddingDays
    */
   let paddingDays = days.indexOf(
     currentDay.charAt(0).toUpperCase() + currentDay.slice(1)
@@ -346,7 +427,7 @@ export const createTableBody = (tableId, config) => {
   /**
    * Integer difference between last day of the current month
    * and first [0-6] days of the next month.
-   * @var {int} nextMonthDayDifference
+   * @var {number} nextMonthDayDifference
    */
   let nextMonthDayDifference = calendarSize - (daysInMonth + paddingDays - 1);
 
