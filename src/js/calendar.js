@@ -1,4 +1,6 @@
 import resizeCalendar from "./responsive.js";
+import { weekEndColor, disabledColor } from "./styling.js";
+import { addEventToButtons } from "./interactive.js";
 /**
  * Compiled via sass cli
  */
@@ -39,93 +41,6 @@ const __month = date.getMonth();
 const __year = date.getFullYear();
 
 /**
- * Add event to buttons for interaction
- * @param {*} tableId
- * @param {*} params
- */
-const addEventToButtons = (tableId, params) => {
-  const iconPrevButton = document.getElementById("iconPrevCalendar");
-  const iconNextButton = document.getElementById("iconNextCalendar");
-  const dataCells = document.querySelectorAll("[data-date]");
-
-  let busySelecting = false;
-  let selectedDays = [];
-  let lastIndex;
-
-  for (let i = 0; i < dataCells.length; i++) {
-    dataCells[i].addEventListener("click", (evt) => {
-      //console.log(evt.target.attributes[0].nodeValue);
-    });
-
-    dataCells[i].addEventListener("mousedown", (evt) => {
-      document.getElementsByTagName("body")[0].style.userSelect = "none";
-      busySelecting = true;
-      selectedDays.push(evt.target);
-      if (!dataCells[i].classList.contains("disabled")) {
-        lastIndex = i;
-        //console.log(selectedDays.length);
-        selectedDays.forEach((elem) => {
-          elem.classList.remove("selected");
-        });
-
-        dataCells[i].classList.add("selected");
-      }
-    });
-
-    dataCells[i].addEventListener("mouseover", (evt) => {
-      if (
-        busySelecting &&
-        !dataCells[i].classList.contains("disabled") &&
-        lastIndex < i
-      ) {
-        evt.target.classList.add("selected");
-        //console.log(`Last index + 1: ${lastIndex + 1}`);
-        //console.log(`Current index : ${i}`);
-        if (lastIndex + 1 < i) {
-          console.log(lastIndex + 1);
-          for (let d = i; d > lastIndex; d--) {
-            dataCells[d].classList.add("selected");
-            selectedDays.push(dataCells[d]);
-          }
-        }
-        selectedDays.push(evt.target);
-      }
-
-      evt.target.classList.add("hover");
-      //console.log(evt.target);
-    });
-
-    dataCells[i].addEventListener("mouseup", (evt) => {
-      busySelecting = false;
-      document.getElementsByTagName("body")[0].style.userSelect = "auto";
-
-      let firstDay = selectedDays[0].attributes[0].value;
-      let lastDay = selectedDays[selectedDays.length - 1].attributes[0].value;
-    
-      // Display popup
-      if (!dataCells[i].classList.contains("disabled")) {
-        alert(`Event for \n${firstDay} - ${lastDay}`);
-      }
-    });
-
-    dataCells[i].addEventListener("mouseleave", (evt) => {
-      evt.target.classList.remove("hover");
-    });
-  }
-
-  iconPrevButton.addEventListener("click", () => {
-    params.month = params.month > 0 ? params.month - 1 : MONTH;
-    createTableBody(tableId, params);
-  });
-
-  iconNextButton.addEventListener("click", () => {
-    params.month = params.month < MONTH ? params.month + 1 : 0;
-    createTableBody(tableId, params);
-  });
-};
-
-const hoverizeSelectDate = (dataCells) => {};
-/**
  * This method builds the Days row up to the calendar.
  * If ShortDays is true , short days will be shown
  * @param {*} hookId
@@ -159,15 +74,17 @@ const generateTableCells = (
   let nextCounter = 0;
   let preCounter = params.daysPrevMonth - params.paddingDays;
   let tb = document.getElementById("calTbody");
+  let date = new Date();
 
   for (
     let d = 1;
     d < params.daysInMonth + params.paddingDays + params.nextMonthDayDifference;
     d++
   ) {
-    let date = new Date();
-    date.setFullYear(config.year, config.month, d - 1);
-    //console.log(date.toLocaleDateString());
+    //date.setFullYear(config.year, config.month, d - 1);
+    // Get day cardinality.
+    let dayNum;
+
     if (d % days.length == 1) {
       let tr = document.createElement("tr");
       tr.classList.add("tr-body");
@@ -175,25 +92,84 @@ const generateTableCells = (
     }
     let row = document.getElementsByClassName("tr-body");
     let td = document.createElement("td");
-    td.setAttribute("data-date", date.toLocaleDateString());
     let daydiv;
     if (
       d > params.paddingDays &&
       d - params.paddingDays <= params.daysInMonth
     ) {
-      daydiv = `<div class="day">${d - params.paddingDays}</div>`;
+      dayNum = setDateUnderTd(td, config, date, 0, (d-params.paddingDays));
+      daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday " : "day"}">${
+        d - params.paddingDays
+      }</div>`;
+
+      if(config.disableWeekend && (dayNum == 5 || dayNum == 6)){
+        td.setAttribute("disabled", "true");
+        td.classList.add("disabled");
+      }
     } else if (d <= params.paddingDays) {
-      daydiv = `<div class="day">${++preCounter}</div>`;
+      dayNum = setDateUnderTd(td, config, date, -1, (preCounter + 1))
+      daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday" : "day"}">${++preCounter}</div>`;
       td.setAttribute("disabled", "true");
-      td.classList.add("disabled");
+      td.classList.add("disabled"); 
+    
     } else if (d - params.paddingDays > params.daysInMonth) {
-      daydiv = `<div class="day">${++nextCounter}</div>`;
+      dayNum = setDateUnderTd(td, config, date, 1, (nextCounter + 1))
+      daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday" : "day"}">${++nextCounter}</div>`;
       td.setAttribute("disabled", "true");
       td.classList.add("disabled");
     }
     td.innerHTML = daydiv;
     row[row.length - 1].append(td);
   }
+};
+
+/**
+ * This method calculate the respective date across td 
+ * and set it in data-date attribute.
+ * Returns the day cardinality of the iterating day.
+ * 
+ * @param {HtmlElement} td 
+ * @param {Object} config 
+ * @param {Date} date 
+ * @param {number} monthOffset 
+ * @param {number} dayOffset 
+ * @param {number} yearOffset 
+ * @returns {number} 
+ * 
+ */
+const setDateUnderTd = (
+  td,
+  config,
+  date,
+  monthOffset = 0,
+  dayOffset,
+  yearOffset = 0,
+) => {
+  date.setFullYear(
+    config.year + yearOffset,
+    config.month + monthOffset,
+    dayOffset
+  );
+  td.setAttribute("data-date", date.toLocaleDateString());
+
+  return dayCardinality(date);
+};
+
+/**
+ * Returns the cardinality of the day
+ * @returns {number}
+ */
+const dayCardinality = (date) => {
+  let stringDay = date.toLocaleDateString("it-IT", {
+    weekday: "long",
+  });
+
+  let dayNum = days.indexOf(
+    stringDay.charAt(0).toUpperCase() + stringDay.slice(1)
+  );
+  console.log(`${stringDay} - ${dayNum}`);
+
+  return dayNum;
 };
 
 /**
@@ -263,7 +239,7 @@ const buildTableMarkup = (
   config
 ) => {
   let tableDiv = document.getElementById(tableId);
-
+  console.log(tableDiv);
   // Check if wrapper div is already created.
   let calWrap = document.getElementsByClassName("calwrapper")[0];
 
@@ -295,6 +271,14 @@ const buildTableMarkup = (
   if (config.responsive == true) {
     resizeCalendar(tableId);
   }
+
+  if (config.weekEndColor != "default") {
+    weekEndColor(config);
+  }
+
+  if (config.disabledColor != "default") {
+    disabledColor(config);
+  }
 };
 
 /**
@@ -305,7 +289,7 @@ const buildTableMarkup = (
  * @param {*} config
  */
 
-const createTableBody = (tableId, config) => {
+export const createTableBody = (tableId, config) => {
   console.log(config);
   let year = config.year == null ? __year : config.year;
   let month = config.month == null ? __month : config.month;
@@ -392,11 +376,17 @@ const createTableBody = (tableId, config) => {
 const buildCalendar = (
   tableId,
   {
-    disableWeekend = true,
+    disableWeekend = false,
     disableCol = [],
     iconNext = "default",
     iconPrev = "default",
     responsive = false,
+    rangeSelection = false,
+    borderCollapse = false,
+    borderColor = false,
+    borderSpacing = false,
+    weekEndColor = "default",
+    disabledColor = "default",
     year = __year,
     month = __month,
     day = __day,
@@ -407,6 +397,12 @@ const buildCalendar = (
     disableWeekend,
     iconNext,
     iconPrev,
+    rangeSelection,
+    borderCollapse,
+    borderColor,
+    borderSpacing,
+    weekEndColor,
+    disabledColor,
     year,
     month,
     day,

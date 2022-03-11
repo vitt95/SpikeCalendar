@@ -1,3 +1,11 @@
+@mixin tdday {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 11pt;
+  font-weight: 550;
+}
+
 .calwrapper {
   padding: 20px;
   border-top: 10px solid orange;
@@ -10,7 +18,7 @@
 }
 
 .calendar-table.table {
-  border-collapse: none !important;
+  //border-collapse: none !important;
 }
 
 .calendar-table.table thead,
@@ -23,7 +31,7 @@
 }
 
 table.calendar-table {
-  border-collapse: unset !important;
+  //border-collapse: unset !important;
   border-spacing: 3px;
 }
 
@@ -60,11 +68,9 @@ table.calendar-table {
   border: 1px solid #ddd;
   box-shadow: 0px 1px 2px -1px;
   transition: transform 0.2s;
-  background-color: #fff;
   &:hover {
-    transform: scale(1.2);
-    z-index: 999;
     cursor: pointer;
+    box-shadow: 1px 2px 19px -7px #7bc7f4 !important;
   }
 }
 
@@ -73,17 +79,22 @@ table.calendar-table {
 }
 
 .calendar-table td .day {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 11pt;
-  color: #000;
+  color: #000; 
+  @include tdday();
+}
+
+.calendar-table td .weday {
+  color : rgb(226, 48, 48);
+  @include tdday();
 }
 
 .calendar-table td.disabled {
   background-color: #9d9393;
   cursor: not-allowed;
   pointer-events: all !important;
+  &:hover {
+    box-shadow: unset !important;
+  }
 }
 
 .calendar-table .weekend.disabled {
