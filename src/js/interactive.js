@@ -162,7 +162,7 @@ const buildEventModal = (firstDate, lastDate) => {
 
     // Obscure overlay 
     let obs = buildBodyObs();
-    
+
     appendChildToBody(obs);
 
     bindEventModalButtons();
@@ -176,6 +176,9 @@ const buildBodyObs = () => {
     
     let obs = document.createElement('div');
     obs.classList.add('spikeCalendarObs');
+    let body = document.getElementsByTagName('body')[0];
+    body.style.position = 'relative';
+    body.style.overflowY = 'hidden';
 
     return obs;
 }
@@ -297,6 +300,8 @@ const bindEventModalButtons = () => {
         const spikeCalendarObs = document.getElementsByClassName('spikeCalendarObs')[0];
         const body = document.getElementsByTagName('body')[0];
 
+        body.style.position = 'unset';
+        body.style.overflowY = 'scroll';
         body.removeChild(spikeCalendarEvent);
         body.removeChild(spikeCalendarObs);
     });
