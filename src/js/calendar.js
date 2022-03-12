@@ -1,12 +1,10 @@
 import resizeCalendar from "./responsive.js";
 import { weekEndColor, disabledColor } from "./styling.js";
-import { addEventToButtons } from "./interactive.js";
+import { addEventToButtons, MONTH } from "./interactive.js";
 /**
  * Compiled via sass cli
  */
 //import "../scss/_calendar.scss";
-
-const MONTH = 11;
 
 const months = [
   "Gennaio",
@@ -46,10 +44,10 @@ const __year = date.getFullYear();
  * @param {*} hookId
  * @param {*} config
  */
-const generateDaysRow = (hookId, config = { shortDays: false }) => {
+const generateDaysRow = (hookId, config) => {
   let hook = document.getElementById(hookId);
   for (let i = 0; i < days.length; i++) {
-    let th = document.createElement("th");
+    let th = document.createElement("th", );
     th.innerText = config.shortDays ? shortDays[i] : days[i];
     th.classList.add("dayth");
     hook.append(th);
@@ -60,6 +58,7 @@ const generateDaysRow = (hookId, config = { shortDays: false }) => {
  * This method generates the main part of the calendar.
  * It provide days markup and days display logic computation
  * @param {*} params
+ * @param {*} config
  */
 const generateTableCells = (
   params = {
@@ -125,7 +124,7 @@ const generateTableCells = (
 /**
  * This method calculate the respective date across td 
  * and set it in data-date attribute.
- * Returns the day cardinality of the iterating day.
+ * Returns the day cardinality of the iterating day
  * 
  * @param {HtmlElement} td 
  * @param {Object} config 
@@ -330,9 +329,7 @@ const buildTableMarkup = (
   });
 
   // Generate days row
-  generateDaysRow("calendarDaysRow", {
-    shortDays: true,
-  });
+  generateDaysRow("calendarDaysRow", config);
 
   // Generate days cells
   generateTableCells(params, config);
@@ -454,6 +451,7 @@ const buildCalendar = (
     borderCollapse = false,
     borderColor = false,
     borderSpacing = false,
+    shortDays = false,
     weekEndColor = "default",
     disabledColor = "default",
     year = __year,
@@ -470,6 +468,7 @@ const buildCalendar = (
     borderCollapse,
     borderColor,
     borderSpacing,
+    shortDays,
     weekEndColor,
     disabledColor,
     year,

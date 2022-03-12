@@ -1,0 +1,60 @@
+.spikeCalendarEvent {
+  position: absolute;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  background: #f3f3f3;
+  //box-shadow: 5px 5px 45px -4px rgb(150, 146, 146);
+  width: 520px;
+  height: 460px;
+  border-radius: 0.3em;
+  z-index: 999;
+  .spikeCalendarEventContent {
+    padding: 40px;
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .spikeEventCalInputDateGroup {
+      width: 48%;
+    }
+  }
+  .spikeCalendarEventWrapper {
+    .row {
+      margin-top: 13px;
+    }
+  }
+}
+
+#spikeCalendarEventClose, #spikeCalendarEventSubmit {
+    width : 100%;
+}
+
+.spikeCalendarEventDateInput{
+    width: 49% !important;
+}
+
+#spikeCalendarEventClose{
+    margin-bottom: 10px;
+}
+
+.spikeCalendarObs {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0, 0, 0);
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.3918299741771709) 0%,
+    rgba(56, 53, 53, 0.837) 0%
+  );
+}
