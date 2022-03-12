@@ -24,6 +24,8 @@ export const addEventToButtons = (tableId, params) => {
     params.month = params.month < MONTH ? params.month + 1 : 0;
     createTableBody(tableId, params);
   });
+
+
 };
 
 /**
@@ -135,35 +137,47 @@ const buildEventModal = (firstDate, lastDate) => {
     inputDateRow.appendChild(firstDateElem);
     inputDateRow.appendChild(lastDateElem);
 
+    // Row title
     let eventTitleRow = buildBootstrapRow();
-
     eventTitleRow.appendChild(buildCalendarInputDate('spikeCalendarEventTitleInput',false, false, 'Titolo evento' ,'spikeEventCalInputTitle', 'spikeEventTitleInputField'));
     
+    // TextArea
+    let textAreaRow = buildBootstrapRow('spikeCalendarEventTextRow', 'spikeCalendarRow')
+    textAreaRow.appendChild(buildTextArea("spikeCalendarEventTxtNote", "Note", "spikeCalendarEventTextArea", "spikeCalendarEventTextAreaGroup"))
+
+    // Buttons row
+    let buttonsRow = buildBootstrapRow(false, 'spikeModalButtonRow');
+    buttonsRow.appendChild(buildButton('spikeCalendarEventClose', 'Chiudi', true,'spikeEventWrapButton' ,'btn', 'btn-warning'));
+    buttonsRow.appendChild(buildButton('spikeCalendarEventSubmit', 'Crea', true, 'spikeEventWrapButton' ,'btn', 'btn-success'));
+
     spikeCEVC.appendChild(h3);
     spikeCEV.appendChild(spikeCEVC);
     spikeCEVC.appendChild(spikeCEVW);
     spikeCEVW.appendChild(inputDateRow);
     spikeCEVW.appendChild(eventTitleRow);
-
-    // TextArea
-    let textAreaRow = buildBootstrapRow('spikeCalendarEventTextRow', 'spikeCalendarRow')
-    textAreaRow.appendChild(buildTextArea("spikeCalendarEventTxtNote", "Note", "spikeCalendarEventTextArea", "spikeCalendarEventTextAreaGroup"))
-
     spikeCEVW.appendChild(textAreaRow);
-
-    
-    // Buttons row
-
-    let buttonsRow = buildBootstrapRow(false, 'spikeModalButtonRow');
-    buttonsRow.appendChild(buildButton('spikeCalendarEventClose', 'Chiudi', true,'spikeEventWrapButton' ,'btn', 'btn-warning'));
-    buttonsRow.appendChild(buildButton('spikeCalendarEventSubmit', 'Crea', true, 'spikeEventWrapButton' ,'btn', 'btn-success'));
-
     spikeCEVW.appendChild(buttonsRow);
 
     appendChildToBody(spikeCEV);
+
+    // Obscure overlay 
+    let obs = buildBodyObs();
+    
+    appendChildToBody(obs);
+
+    bindEventModalButtons();
+}
+
+/**
+ * Return an Obscure overlay for the body.
+ * @returns {HtmlElement}
+ */
+const buildBodyObs = () => {
+    
     let obs = document.createElement('div');
     obs.classList.add('spikeCalendarObs');
-    appendChildToBody(obs);
+
+    return obs;
 }
 
 /**
@@ -272,6 +286,20 @@ const buildBootstrapRow = (id=false, ...itemClass) => {
     });
 
     return row;
+}
+
+const bindEventModalButtons = () => {
+    const closeButton = document.getElementById('spikeCalendarEventClose');
+    const submitButton = document.getElementById('spikeCalendarEventSubmit');
+
+    closeButton.addEventListener('click', (evt) => {
+        const spikeCalendarEvent = document.getElementsByClassName('spikeCalendarEvent')[0];
+        const spikeCalendarObs = document.getElementsByClassName('spikeCalendarObs')[0];
+        const body = document.getElementsByTagName('body')[0];
+
+        body.removeChild(spikeCalendarEvent);
+        body.removeChild(spikeCalendarObs);
+    });
 }
 
 
