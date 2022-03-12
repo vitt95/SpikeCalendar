@@ -38,6 +38,8 @@ const rangeSelection = () => {
   let selectedDays = [];
   let lastIndex;
 
+
+
   for (let i = 0; i < dataCells.length; i++) {
     dataCells[i].addEventListener("click", (evt) => {
       //console.log(evt.target.attributes[0].nodeValue);
@@ -49,13 +51,17 @@ const rangeSelection = () => {
       selectedDays.push(evt.target);
       if (!dataCells[i].classList.contains("disabled")) {
         lastIndex = i;
-        //console.log(selectedDays.length);
-        selectedDays.forEach((elem) => {
-          elem.classList.remove("selected");
-        });
+
+        // Remove selected items if any.
+        let selectedItems = document.querySelectorAll('td.selected');
+        if(selectedItems){
+            selectedItems.forEach(elem => {
+                elem.classList.remove('selected');
+            });
+        }
 
         dataCells[i].classList.add("selected");
-      }
+       }
     });
 
     dataCells[i].addEventListener("mouseover", (evt) => {
@@ -85,6 +91,9 @@ const rangeSelection = () => {
       let firstDay = selectedDays[0].attributes[0].value;
       let lastDay = selectedDays[selectedDays.length - 1].attributes[0].value;
 
+      // On mouse up, clean selected days array.
+      selectedDays = [];
+
       // Display popup
       if (!dataCells[i].classList.contains("disabled")) {
         //alert(`Event for \n${firstDay} - ${lastDay}`);
@@ -96,6 +105,7 @@ const rangeSelection = () => {
 
         //showBootstrapModal(firstDay, lastDay);
         buildEventModal(firstDay, lastDay);
+
       }
     });
 
