@@ -26,6 +26,10 @@
   padding: 7px;
 }
 
+td.prevMonthDay, td.nextMonthDay {
+  background: rgba(78, 76, 76, 0.274);
+}
+
 .calendarHeadingButtons {
   height: 35px;
 }
@@ -102,6 +106,9 @@ table.calendar-table {
   &:hover {
     cursor: pointer;
     box-shadow: 1px 2px 19px -7px #7bc7f4 !important;
+  }
+  &.nextMonthDay{
+    background: rgba(78, 76, 76, 0.274);
   }
 }
 

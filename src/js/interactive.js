@@ -38,8 +38,6 @@ const rangeSelection = () => {
   let selectedDays = [];
   let lastIndex;
 
-
-
   for (let i = 0; i < dataCells.length; i++) {
     dataCells[i].addEventListener("click", (evt) => {
       //console.log(evt.target.attributes[0].nodeValue);
@@ -96,13 +94,9 @@ const rangeSelection = () => {
 
       // Display popup
       if (!dataCells[i].classList.contains("disabled")) {
-        //alert(`Event for \n${firstDay} - ${lastDay}`);
-        let modal = document.getElementById('__spikeModal');
-        if(modal){
-            let body = document.getElementsByTagName('body')[0];
-            body.removeChild(modal);
-        }
 
+        // Before display event modal, check if is already present. If it is, remove it and rebuild.
+        removeEventModal();
         //showBootstrapModal(firstDay, lastDay);
         buildEventModal(firstDay, lastDay);
 
@@ -176,6 +170,14 @@ const buildEventModal = (firstDate, lastDate) => {
     appendChildToBody(obs);
 
     bindEventModalButtons();
+}
+
+const removeEventModal = () => {
+    let modal = document.getElementById('__spikeModal');
+    if(modal){
+        let body = document.getElementsByTagName('body')[0];
+        body.removeChild(modal);
+    }
 }
 
 /**

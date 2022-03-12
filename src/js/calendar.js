@@ -107,14 +107,20 @@ const generateTableCells = (
     } else if (d <= params.paddingDays) {
       dayNum = setDateUnderTd(td, config, date, -1, (preCounter + 1))
       daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday" : "day"}">${++preCounter}</div>`;
-      td.setAttribute("disabled", "true");
-      td.classList.add("disabled"); 
+      if(config.disablePrevMonthDays || (config.disableWeekend && (dayNum == 5 || dayNum == 6))){
+        td.setAttribute("disabled", "true");
+        td.classList.add("disabled"); 
+      }
+      td.classList.add('prevMonthDay');
     
     } else if (d - params.paddingDays > params.daysInMonth) {
       dayNum = setDateUnderTd(td, config, date, 1, (nextCounter + 1))
       daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday" : "day"}">${++nextCounter}</div>`;
-      td.setAttribute("disabled", "true");
-      td.classList.add("disabled");
+      if(config.disableNextMonthDays || (config.disableWeekend && (dayNum == 5 || dayNum == 6))){
+        td.setAttribute("disabled", "true");
+        td.classList.add("disabled");
+      }
+      td.classList.add("nextMonthDay");
     }
     td.innerHTML = daydiv;
     row[row.length - 1].append(td);
@@ -452,6 +458,8 @@ const buildCalendar = (
     borderColor = false,
     borderSpacing = false,
     shortDays = false,
+    disablePrevMonthDays = false,
+    disableNextMonthDays = false,
     weekEndColor = "default",
     disabledColor = "default",
     year = __year,
@@ -469,6 +477,8 @@ const buildCalendar = (
     borderColor,
     borderSpacing,
     shortDays,
+    disableNextMonthDays,
+    disablePrevMonthDays,
     weekEndColor,
     disabledColor,
     year,
