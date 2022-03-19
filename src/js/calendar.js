@@ -442,7 +442,7 @@ export const createTableBody = (tableId, config) => {
 
 /**
  * Build calendar method for bootstrapping the calendar.
- * @param {*} tableId
+ * @param {string} tableId
  * @param {*} config
  */
 const buildCalendar = (
