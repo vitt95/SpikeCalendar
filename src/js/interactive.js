@@ -33,11 +33,12 @@ const rangeSelection = () => {
 
   let busySelecting = false;
   let selectedDays = [];
-  let firstIndex, lastIndex, currentIndex = 0;
+  let firstIndex,
+    lastIndex,
+    currentIndex = 0;
 
   for (let i = 0; i < dataCells.length; i++) {
-    dataCells[i].addEventListener("click", (evt) => {});
-
+    
     dataCells[i].addEventListener("mousedown", (evt) => {
       document.getElementsByTagName("body")[0].style.userSelect = "none";
       busySelecting = true;
@@ -54,45 +55,47 @@ const rangeSelection = () => {
       if (
         busySelecting &&
         !dataCells[i].classList.contains("disabled") &&
-        firstIndex <= i 
+        firstIndex <= i
       ) {
         currentIndex = i;
-        lastIndex = lastIndex == 0 ? currentIndex : Math.max(currentIndex, lastIndex);
+        lastIndex =
+          lastIndex == 0 ? currentIndex : Math.max(currentIndex, lastIndex);
         selectedDays.push(dataCells[i]);
         dataCells[i].classList.add("selected");
         if (firstIndex + 1 < i) {
-          for (let d = i-1; d > firstIndex; d--) {
+          for (let d = i - 1; d > firstIndex; d--) {
             dataCells[d].classList.add("selected");
           }
         }
-        if(lastIndex > currentIndex){
-          for(let d = lastIndex; d > currentIndex; d-- ){
+        if (lastIndex > currentIndex) {
+          for (let d = lastIndex; d > currentIndex; d--) {
             dataCells[d].classList.remove("selected");
           }
-        } 
+        }
       }
       evt.target.classList.add("hover");
     });
 
     dataCells[i].addEventListener("mouseup", (evt) => {
-      busySelecting = false;
-      document.getElementsByTagName("body")[0].style.userSelect = "auto";
-
-      console.log(selectedDays);
-      let firstDay = selectedDays[0].attributes[0].value;
-      // On mouse up, clean selected days array.
-      selectedDays = [];
-      
       // Display popup if dataCell[i] doesn't contain a disabled class
-      // and if firstDay selected is less than finalDay selected for 
+      // and if firstDay selected is less than finalDay selected for
       // prevent the pre firstDay selection
-      if (!dataCells[i].classList.contains("disabled") 
-      && convertDate(firstDay,"/","/").getTime() <= convertDate(dataCells[i].attributes[0].value,"/","/").getTime()) {
-        let lastDay = dataCells[i].attributes[0].value;
-        // Before display event modal, check if is already present. If it is, remove it and rebuild.
-        removeEventModal();
-        //showBootstrapModal(firstDay, lastDay);
-        buildEventModal(firstDay, lastDay);
+      if (!dataCells[i].classList.contains("disabled")) {
+        busySelecting = false;
+        document.getElementsByTagName("body")[0].style.userSelect = "auto"; // Disable text selection
+        let firstDay = selectedDays[0].attributes[0].value;
+        // On mouse up, clean selected days array.
+        selectedDays = [];
+        if (
+          convertDate(firstDay, "/", "/").getTime() <=
+          convertDate(dataCells[i].attributes[0].value, "/", "/").getTime()
+        ) {
+          let lastDay = dataCells[i].attributes[0].value;
+          // Before display event modal, check if is already present. If it is, remove it and rebuild.
+          removeEventModal();
+          //showBootstrapModal(firstDay, lastDay);
+          buildEventModal(firstDay, lastDay);
+        }
       }
     });
 
@@ -108,7 +111,6 @@ const rangeSelection = () => {
         dataCells[i].classList.remove("selected");
         selectedDays.pop();
         lastIndex--;
-        //console.log(selectedDays);
       }
     });
   }
@@ -116,15 +118,17 @@ const rangeSelection = () => {
 
 /**
  * Returns a string date into a Date format object
- * @param {string} dateString 
- * @param {char} separatorIn 
- * @param {char} separatorOut 
+ * @param {string} dateString
+ * @param {char} separatorIn
+ * @param {char} separatorOut
  * @returns {Date}
  */
 const convertDate = (dateString, separatorIn, separatorOut) => {
   let explose = dateString.split(separatorIn);
-  return new Date(`${explose[1]}${separatorOut}${explose[0]}${separatorOut}${explose[2]}`);
-}
+  return new Date(
+    `${explose[1]}${separatorOut}${explose[0]}${separatorOut}${explose[2]}`
+  );
+};
 
 /**
  * Remove selected class from td elements
@@ -140,7 +144,7 @@ const removeSelectedClass = () => {
       }
     });
   }
-}
+};
 
 /**
  * Display event modal

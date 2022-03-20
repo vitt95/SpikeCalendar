@@ -76,6 +76,8 @@ const generateTableCells = (
   let date = new Date();
   let dayNum;
 
+  console.log(__month);
+
   for (
     let d = 1;
     d < params.daysInMonth + params.paddingDays + params.nextMonthDayDifference;
@@ -96,18 +98,24 @@ const generateTableCells = (
       d - params.paddingDays <= params.daysInMonth
     ) {
       dayNum = setDateUnderTd(td, config, date, 0, (d-params.paddingDays));
-      daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday " : "day"}">${
+      daydiv = `<div class="${dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6 ? "weday " : "day"}">${
         d - params.paddingDays
       }</div>${isToday(date) ? "<div class='today' title='Today'><span></span></div>" : ""}`;
 
-      if(config.disableWeekend && (dayNum == 5 || dayNum == 6)){
+      if(config.disableWeekend && (dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6)){
         td.setAttribute("disabled", "true");
         td.classList.add("disabled");
       }
     } else if (d <= params.paddingDays) {
       dayNum = setDateUnderTd(td, config, date, -1, (preCounter + 1))
-      daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday" : "day"}">${++preCounter}</div>`;
-      if(config.disablePrevMonthDays || (config.disableWeekend && (dayNum == 5 || dayNum == 6))){
+      daydiv = `<div class="${dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6 ? "weday" : "day"}">${++preCounter}</div>`;
+      
+      // If is set disablePrevMonthDays , will be disabled only days previous 
+      // the current month.
+      if((config.disablePrevMonthDays 
+        || (config.disableWeekend && (dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6))) 
+        && dayNum.monthCardinality < __month ){
+        console.log(dayNum.monthCardinality);
         td.setAttribute("disabled", "true");
         td.classList.add("disabled"); 
       }
@@ -115,8 +123,8 @@ const generateTableCells = (
     
     } else if (d - params.paddingDays > params.daysInMonth) {
       dayNum = setDateUnderTd(td, config, date, 1, (nextCounter + 1))
-      daydiv = `<div class="${dayNum == 5 || dayNum == 6 ? "weday" : "day"}">${++nextCounter}</div>`;
-      if(config.disableNextMonthDays || (config.disableWeekend && (dayNum == 5 || dayNum == 6))){
+      daydiv = `<div class="${dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6 ? "weday" : "day"}">${++nextCounter}</div>`;
+      if(config.disableNextMonthDays || (config.disableWeekend && (dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6))){
         td.setAttribute("disabled", "true");
         td.classList.add("disabled");
       }
@@ -138,7 +146,7 @@ const generateTableCells = (
  * @param {number} monthOffset 
  * @param {number} dayOffset 
  * @param {number} yearOffset 
- * @returns {number} 
+ * @returns {Object} 
  * 
  */
 const setDateUnderTd = (
@@ -156,7 +164,10 @@ const setDateUnderTd = (
   );
   td.setAttribute("data-date", date.toLocaleDateString());
   
-  return dayCardinality(date);
+  return {
+    dayCardinality: dayCardinality(date),
+    monthCardinality: config.month + monthOffset
+  }
 };
 
 /**
@@ -266,6 +277,7 @@ const buildCalendarHeading = (month, config) => {
   heading.classList.add("calendarHeading");
 
   let monthText = document.createElement('h2');
+  // Month display
   monthText.innerText = `${months[month]}`;
   heading.appendChild(monthText);
 
