@@ -79,13 +79,15 @@ const rangeSelection = () => {
       document.getElementsByTagName("body")[0].style.userSelect = "auto";
 
       console.log(selectedDays);
-
       let firstDay = selectedDays[0].attributes[0].value;
       // On mouse up, clean selected days array.
       selectedDays = [];
-
-      // Display popup
-      if (!dataCells[i].classList.contains("disabled") && firstDay <= dataCells[i].attributes[0].value) {
+      
+      // Display popup if dataCell[i] doesn't contain a disabled class
+      // and if firstDay selected is less than finalDay selected for 
+      // prevent the pre firstDay selection
+      if (!dataCells[i].classList.contains("disabled") 
+      && convertDate(firstDay,"/","/").getTime() <= convertDate(dataCells[i].attributes[0].value,"/","/").getTime()) {
         let lastDay = dataCells[i].attributes[0].value;
         // Before display event modal, check if is already present. If it is, remove it and rebuild.
         removeEventModal();
@@ -112,6 +114,17 @@ const rangeSelection = () => {
   }
 };
 
+/**
+ * Returns a string date into a Date format object
+ * @param {string} dateString 
+ * @param {char} separatorIn 
+ * @param {char} separatorOut 
+ * @returns {Date}
+ */
+const convertDate = (dateString, separatorIn, separatorOut) => {
+  let explose = dateString.split(separatorIn);
+  return new Date(`${explose[1]}${separatorOut}${explose[0]}${separatorOut}${explose[2]}`);
+}
 
 /**
  * Remove selected class from td elements
