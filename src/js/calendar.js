@@ -75,16 +75,12 @@ const generateTableCells = (
   let tb = document.getElementById("calTbody");
   let date = new Date();
   let dayNum;
-
-  console.log(__month);
-
+  
   for (
     let d = 1;
     d < params.daysInMonth + params.paddingDays + params.nextMonthDayDifference;
     d++
   ) {
-    //date.setFullYear(config.year, config.month, d - 1);
-    // Get day cardinality.
     if (d % days.length == 1) {
       let tr = document.createElement("tr");
       tr.classList.add("tr-body");
@@ -113,8 +109,8 @@ const generateTableCells = (
       // If is set disablePrevMonthDays , will be disabled only days previous 
       // the current month.
       if((config.disablePrevMonthDays 
-        || (config.disableWeekend && (dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6))) 
-        && dayNum.monthCardinality < __month ){
+        && dayNum.monthCardinality < __month )
+        || (config.disableWeekend && (dayNum.dayCardinality == 5 || dayNum.dayCardinality == 6))){
         console.log(dayNum.monthCardinality);
         td.setAttribute("disabled", "true");
         td.classList.add("disabled"); 
