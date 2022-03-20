@@ -54,7 +54,7 @@ const rangeSelection = () => {
       if (
         busySelecting &&
         !dataCells[i].classList.contains("disabled") &&
-        firstIndex < i
+        firstIndex <= i
       ) {
         currentIndex = i;
         lastIndex = lastIndex == 0 ? currentIndex : Math.max(currentIndex, lastIndex);
@@ -67,6 +67,7 @@ const rangeSelection = () => {
         }
         if(lastIndex > currentIndex){
           for(let d = lastIndex; d > currentIndex; d-- ){
+            console.log(d);
             dataCells[d].classList.remove("selected");
           }
         } 
