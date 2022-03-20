@@ -183,7 +183,7 @@ const dayCardinality = (date) => {
   let dayNum = days.indexOf(
     stringDay.charAt(0).toUpperCase() + stringDay.slice(1)
   );
-  console.log(`${stringDay} - ${dayNum}`);
+  //console.log(`${stringDay} - ${dayNum}`);
 
   return dayNum;
 };
@@ -300,7 +300,7 @@ const buildTableMarkup = (
   config
 ) => {
   let tableDiv = document.getElementById(tableId);
-  console.log(tableDiv);
+  //console.log(tableDiv);
   // Check if wrapper div is already created.
   let calWrap = document.getElementsByClassName("calwrapper")[0];
 

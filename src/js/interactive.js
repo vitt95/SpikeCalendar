@@ -33,9 +33,7 @@ const rangeSelection = () => {
 
   let busySelecting = false;
   let selectedDays = [];
-  let firstIndex = 0;
-  let lastIndex = 0;
-  let currentIndex = 0;
+  let firstIndex, lastIndex, currentIndex = 0;
 
   for (let i = 0; i < dataCells.length; i++) {
     dataCells[i].addEventListener("click", (evt) => {});
@@ -60,12 +58,11 @@ const rangeSelection = () => {
       ) {
         currentIndex = i;
         lastIndex = lastIndex == 0 ? currentIndex : Math.max(currentIndex, lastIndex);
-        console.log(`Last index : ${lastIndex}`);
-        evt.target.classList.add("selected");
+        selectedDays.push(dataCells[i]);
+        dataCells[i].classList.add("selected");
         if (firstIndex + 1 < i) {
-          for (let d = i; d > firstIndex; d--) {
+          for (let d = i-1; d > firstIndex; d--) {
             dataCells[d].classList.add("selected");
-            //selectedDays.push(dataCells[d]);
           }
         }
         if(lastIndex > currentIndex){
@@ -73,11 +70,7 @@ const rangeSelection = () => {
             dataCells[d].classList.remove("selected");
           }
         } 
-        selectedDays.push(evt.target);
       }
-
-      console.log(selectedDays);
-
       evt.target.classList.add("hover");
     });
 
@@ -85,16 +78,15 @@ const rangeSelection = () => {
       busySelecting = false;
       document.getElementsByTagName("body")[0].style.userSelect = "auto";
 
+      console.log(selectedDays);
+
       let firstDay = selectedDays[0].attributes[0].value;
-      let lastDay = selectedDays[selectedDays.length - 1].attributes[0].value;
-
-      console.log(`Giorni selezionati ${selectedDays.length}`);
-
       // On mouse up, clean selected days array.
       selectedDays = [];
 
       // Display popup
-      if (!dataCells[i].classList.contains("disabled")) {
+      if (!dataCells[i].classList.contains("disabled") && firstDay <= dataCells[i].attributes[0].value) {
+        let lastDay = dataCells[i].attributes[0].value;
         // Before display event modal, check if is already present. If it is, remove it and rebuild.
         removeEventModal();
         //showBootstrapModal(firstDay, lastDay);
@@ -111,17 +103,20 @@ const rangeSelection = () => {
         !evt.target.classList.contains("firstSelect") &&
         i > firstIndex
       ) {
-        evt.target.classList.remove("selected");
+        dataCells[i].classList.remove("selected");
         selectedDays.pop();
         lastIndex--;
-        console.log(selectedDays);
+        //console.log(selectedDays);
       }
     });
   }
 };
 
 
-
+/**
+ * Remove selected class from td elements
+ * @returns {void}
+ */
 const removeSelectedClass = () => {
   let selectedItems = document.querySelectorAll("td.selected");
   if (selectedItems) {
@@ -133,7 +128,6 @@ const removeSelectedClass = () => {
     });
   }
 }
-
 
 /**
  * Display event modal
